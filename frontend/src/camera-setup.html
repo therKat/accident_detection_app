@@ -381,11 +381,19 @@
         </div>
     </div>
 
-    <script 
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnsP0Ifon8-QQlGYd1wNl01Zw0M7-_JU0&callback=initializeMap" 
-        async 
-        defer 
-        loading="lazy">
+    <script>
+        fetch("../config.json")
+            .then(response => response.json())
+            .then(config => {
+                const apiKey = config.apiKey;
+                const script = document.createElement("script");
+                script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initializeMap`;
+                script.async = true;
+                script.defer = true;
+                script.loading = "lazy";
+                document.body.appendChild(script);
+            })
+            .catch(error => console.error("Lỗi khi tải API Key:", error));
     </script>
     <script src="camera-setup.js"></script>
 

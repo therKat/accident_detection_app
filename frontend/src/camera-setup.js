@@ -336,8 +336,19 @@ document.addEventListener('DOMContentLoaded', async  () => {
     const devices = await navigator.mediaDevices.enumerateDevices();
     console.log("Danh sách thiết bị:", devices);
     // Load Google Maps
-    const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCqgmoPRz6Okc1-VQ4t6omkRDG4GSolf0A&callback=initializeMap`;
+    const script = document.createElement('script');fetch("../config.json")
+    .then(response => response.json())
+    .then(config => {
+        const apiKey = config.apiKey;
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initializeMap`;
+        script.async = true;
+        script.defer = true;
+        script.loading = "lazy";
+        document.body.appendChild(script);
+    })
+    .catch(error => console.error("Lỗi khi tải API Key:", error));
+
     script.async = true;
     script.defer = true;
     window.initializeMap = initializeMap;

@@ -17,12 +17,12 @@ function createWindow() {
             permissions: ['camera', 'geolocation'], 
             enableBlinkFeatures: "MediaCapture",
         },
-        autoHideMenuBar: true
+        // autoHideMenuBar: true
     });
 
     mainWindow.loadFile(path.join(__dirname, '../frontend/src/camera-setup.html'));
     
-    mainWindow.removeMenu();
+    // mainWindow.removeMenu();
 
     mainWindow.webContents.session.setPermissionRequestHandler((webContents, permission, callback) => {
         const allowedPermissions = ['geolocation', 'media'];
