@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cài Đặt Camera - Hệ Thống Phát Hiện Tai Nạn</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #f4f6f9;
+            --text-color: #2c3e50;
+            --border-color: #e0e4e8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .camera-setup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .camera-setup-wrapper {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 800px;
+            padding: 40px 40px 20px 40px;
+        }
+
+        .setup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .setup-header h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .setup-header p {
+            color: #6c757d;
+        }
+
+        .setup-section {
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .section-title h2 {
+            color: var(--text-color);
+            font-size: 1.2em;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .coordinate-display {
+            background-color: #f1f2f6;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-color);
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #555f66;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 350px;
+            background-color: #e9ecef;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .camera-setup-wrapper {
+                padding: 20px;
+            }
+        }
+        .error-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .error-modal-content {
+            background-color: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: modalFadeIn 0.3s ease;
+        }
+
+        .error-modal-icon {
+            font-size: 60px;
+            color: var(--error-color);
+            margin-bottom: 20px;
+        }
+
+        .error-modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--error-color);
+            margin-bottom: 15px;
+        }
+
+        .error-modal-message {
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .error-modal-close {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .error-modal-close:hover {
+            background-color: #2980b9;
+        }
+
+        .tooltip-container {
+            position: relative;
+            display: inline-block;
+            cursor: help; /* Hiển thị dấu hỏi khi hover */
+        }
+    
+        .tooltip-icon {
+            font-weight: bold;
+            color: red; /* Màu xanh để nổi bật */
+            margin-left:2px;
+            font-size: 14px;
+        }
+    
+        .tooltip-text {
+            visibility: hidden;
+            width: 300px;
+            background-color: rgba(0, 0, 0, 0.75);
+            color: #fff;
+            text-align: center;
+            padding: 8px;
+            border-radius: 5px;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 14px;
+            white-space: normal;
+        }
+    
+        .tooltip-container:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="camera-setup-container">
+        <div class="camera-setup-wrapper">
+            <div class="setup-header">
+                <h1>CÀI ĐẶT CAMERA GIÁM SÁT</h1>
+                <p>Thiết lập vị trí và nguồn camera cho hệ thống phát hiện tai nạn</p>
+            </div>
+
+            <div class="setup-section">
+                <div class="section-title">
+                    <h2>CHỌN CAMERA</h2>
+                </div>
+                <div class="form-group">
+                    <label class="tooltip-container">
+                        Nguồn Camera
+
+                        <span class="tooltip-icon">*</span>
+                        
+                        <span class="tooltip-text">
+                            Chọn nguồn camera từ danh sách có sẵn trong hệ thống.
+                        </span>
+                    </label>
+                    
+                    <select id="cameraSelect" class="form-control">
+                        <option value="">Đang tải danh sách camera...</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="setup-section">
+                <div class="section-title">
+                    <h2 class="tooltip-container">
+                        VỊ TRÍ NGƯỜI DÙNG
+                        <span class="tooltip-icon">*</span>
+                        
+                        <span class="tooltip-text">
+                            Hệ thống sẽ tự động lấy vị trí của bạn.
+                        </span>
+                    </h2>
+                    
+                </div>       
+                                       
+                <div id="userMapContainer" class="map-container" ></div>
+                <div class="grid-2col" style="margin-top: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Vĩ độ</label>
+                        <div id="stationLat" class="coordinate-display">Đang xác định...</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kinh độ</label>
+                        <div id="stationLng" class="coordinate-display">Đang xác định...</div>
+                    </div>
+                </div>
+                <!-- <button id="refreshLocation" class="btn btn-secondary">
+                    LÀM MỚI VỊ TRÍ
+                </button> -->
+            </div>
+            <div class="setup-section">
+                <div class="section-title">
+                    <h2 class="tooltip-container">
+                        VỊ TRÍ CAMERA
+                        <span class="tooltip-icon">*</span>
+                        
+                        <span class="tooltip-text">
+                            Chọn hoặc nhập vị trí đặt camera. Hệ thống sẽ hiển thị vị trí trên bản đồ.
+                        </span>
+                    </h2>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Chọn Camera Mặc Định</label>
+                    <select id="defaultCameraSelect" class="form-control">
+                        <option value="">-- Chọn một camera mặc định --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">
+                        Địa chỉ chi tiết Camera
+                    </label>
+                    <input type="text" id="cameraDetailedAddress" 
+                        placeholder="Nhập địa chỉ chi tiết của camera (vd: Ngã tư Lê Văn Lương - Hoàng Đạo Thúy, Thanh Xuân, Hà Nội)" 
+                        class="form-control">
+                </div>
+                <div id="mapContainer" class="map-container"></div>
+                <div class="grid-2col" style="margin-top: 15px;">
+                    <div class="form-group">
+                        <label class="form-label">Vĩ độ</label>
+                        <div id="selectedLat" class="coordinate-display">-</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kinh độ</label>
+                        <div id="selectedLng" class="coordinate-display">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="setup-section">
+                <button id="startDetectionPage" class="btn">
+                    BẮT ĐẦU GIÁM SÁT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Modal -->
+    <div id="errorModal" class="error-modal">
+        <div class="error-modal-content">
+            <div class="error-modal-icon">⚠️</div>
+            <div class="error-modal-title">Lỗi Hệ Thống</div>
+            <div id="errorModalMessage" class="error-modal-message">Đã xảy ra lỗi không xác định.</div>
+            <button id="closeErrorModal" class="error-modal-close">Đóng</button>
+        </div>
+    </div>
+
+    <script 
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnsP0Ifon8-QQlGYd1wNl01Zw0M7-_JU0&callback=initializeMap" 
+        async 
+        defer 
+        loading="lazy">
+    </script>
+    <script src="camera-setup.js"></script>
+
+</body>
+</html>
