@@ -20,3 +20,5 @@ frontend/dist/
 
 .DS_Store
 Thumbs.db
+
+frontend/config.json
